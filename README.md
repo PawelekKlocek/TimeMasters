@@ -51,6 +51,8 @@
 
 ## 4. Opis modelowanego systemu
 
+|                              |                                                                                                                                                             |
+|------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | **Aktorzy**                  | Admin, pracownicy                                                                                                                                           |
 | **Opis**                     | Celem działania jest pełen wgląd w czas pracy pracowników firmy w celu dokładniejszej kontroli ich wydajności w ramach kwartalnej/miesięcznej ewaluacji.    |
 | **Dane**                     | Czas rozpoczęcia i zakończenia pracy w danym dniu.                                                                                                          |
