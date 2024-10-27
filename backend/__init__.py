@@ -4,7 +4,11 @@ def create_app():
     app = Flask(__name__)
 
     @app.route('/')
-    def hello_world():
+    def home():
         return 'Hello World!'
 
     return app
+
+if __name__ == '__main__':
+    app = create_app()
+    app.run(debug=True, port=8080)
