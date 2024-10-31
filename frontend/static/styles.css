@@ -36,28 +36,29 @@ body {
 
 .container2 {
     background: rgba(0, 0, 0, 0.7); /* Lekko przezroczyste tło */
-    border-radius: 15px; /* Zaokrąglone rogi */
-    padding: 30px; /* Wewnętrzne marginesy */
-    width: 80%; /* Szerokość kontenera */
-    text-align: center; /* Wyśrodkowuje tekst */
+    border-radius: 15px; 
+    padding: 30px; 
+    width: 80%;
+    text-align: center; 
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    margin-top: 80px;
 }
 .timer-container {
-    background: white; /* Białe tło dla timera */
-    border-radius: 20px; /* Zaokrąglone rogi */
-    padding: 15px; /* Wewnętrzne marginesy */
-    color: black; /* Kolor tekstu */
-    font-size: 5em; /* Rozmiar czcionki */
-    margin: 20px 0; /* Marginesy dla timera */
+    background: white; 
+    border-radius: 20px; 
+    padding: 15px; 
+    color: black; 
+    font-size: 5em; 
+    margin: 20px 0; 
 }
 
 #currentDate {
-    font-size: 0.4em; /* Rozmiar czcionki dla daty */
-    margin-top: 10px; /* Odstęp górny dla daty */
+    font-size: 0.4em; 
+    margin-top: 10px; 
 }
 
 .button-container {
-    display: flex; /* Elastyczny układ dla przycisków */
+    display: flex; 
     justify-content: space-around; 
     width: 100%;
     margin: 20px 20px; 
@@ -83,6 +84,38 @@ h2 {
 label {
     font-weight: bold;
     font-size: 1.6em;
+}
+
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #f0f0f0;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+.user-greeting {
+    font-size: 1.2em;
+    color: #333;
+    margin-left: 10px;
+}
+
+.logout-button {
+    text-decoration: none;
+    background-color: #480e50;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.logout-button:hover {
+    background-color: #47254d;
 }
 
 input[type="id"],
@@ -125,18 +158,51 @@ button {
     cursor: pointer; 
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); /* Efekt 3D */
     transition: transform 0.2s; 
-    margin: 20px 0px; 
+    margin: 20px -20px; 
 }
 
 .button_shift:hover {
-    transform: scale(1.1); /* Powiększenie przycisku na hover */
+    transform: scale(1.1); 
 }
 
 .button_shift:disabled {
-    background-color: #ccc; /* Szary kolor dla zablokowanych przycisków */
-    cursor: not-allowed; /* Kursor zakazany dla zablokowanych przycisków */
+    background-color: #ccc; 
+    cursor: not-allowed; 
 }
 
 button:hover {
     background-color: #47254d;
+}
+
+.admin-panel{
+    display: flex;
+    justify-content:space-evenly;
+    align-items: center;
+    background-color: rgba(255, 255, 255, 0.8); 
+    border-radius: 15px; 
+    padding: 10px;
+    width: 90%; 
+    max-width: 600px;
+    margin: auto; 
+    margin-top: 50px; 
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.admin-button {
+    display: block;
+    margin: 5px auto;
+    padding: 5px 5px;
+    background-color: #3d184a;
+    width: 140px;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: transform 0.2s; 
+}
+
+.admin-button:hover {
+    background-color: #da97e0;
+    color: rgb(36, 5, 36);
+    transform: scale(1.1); 
 }

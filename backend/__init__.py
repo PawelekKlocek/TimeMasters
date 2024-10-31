@@ -14,6 +14,10 @@ def create_app():
     @app.route('/dashboard')
     def dashboard():
         return render_template('dashboard.html')
+    
+    @app.route('/admin')
+    def admin():
+        return render_template('admin.html')
 
     with app.app_context():
         db.create_all()  # Tworzenie tabel w bazie danych

@@ -41,17 +41,22 @@ def login():
 def dashboard():
     return render_template('dashboard.html')
 
+@app.route('/admin')
+# @login_required
+def admin():
+    return render_template('admin.html')
+
 @app.route('/')
 def index():
-    return redirect(url_for('login'))  # Przekierowanie do logowania
+    return render_template('login.html') # Przekierowanie do logowania
 
 
 @app.route('/logout')
-@login_required
+#@login_required
 def logout():
     logout_user()
     flash('You have been logged out', 'info')
-    return redirect(url_for('login'))
+    return render_template('login.html')
 
 if __name__ == '__main__':
     with app.app_context():
