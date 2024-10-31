@@ -9,51 +9,134 @@ h1 {
 
 
 body {
-    background-color: #f0f0f0;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
     margin: 0;
+    background-image: url('../static/tlo.jpg'); 
+    background-size: cover; 
+    background-position: center; 
 }
 
 .container {
     display: flex;
-    justify-content: center;
+    justify-content:space-evenly;
     align-items: center;
+    background-color: rgba(255, 255, 255, 0.8); 
+    border-radius: 15px; 
+    padding: 20px;
+    width: 80%; 
+    height: 80%;
+    max-width: 600px;
+    margin: auto; 
+    margin-top: 100px; 
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Cień */
 }
+
+.container2 {
+    background: rgba(0, 0, 0, 0.7); /* Lekko przezroczyste tło */
+    border-radius: 15px; /* Zaokrąglone rogi */
+    padding: 30px; /* Wewnętrzne marginesy */
+    width: 80%; /* Szerokość kontenera */
+    text-align: center; /* Wyśrodkowuje tekst */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+.timer-container {
+    background: white; /* Białe tło dla timera */
+    border-radius: 20px; /* Zaokrąglone rogi */
+    padding: 15px; /* Wewnętrzne marginesy */
+    color: black; /* Kolor tekstu */
+    font-size: 5em; /* Rozmiar czcionki */
+    margin: 20px 0; /* Marginesy dla timera */
+}
+
+#currentDate {
+    font-size: 0.4em; /* Rozmiar czcionki dla daty */
+    margin-top: 10px; /* Odstęp górny dla daty */
+}
+
+.button-container {
+    display: flex; /* Elastyczny układ dla przycisków */
+    justify-content: space-around; 
+    width: 100%;
+    margin: 20px 20px; 
+    padding: 20px;
+    background: none;
+}
+
 
 .login-panel {
     background-color: #ffffff;
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    width: 300px;
+    width: 90%;
     text-align: center;
 }
 
 h2 {
     margin-bottom: 20px;
+    font-size: 2em;
 }
 
-input[type="email"],
+label {
+    font-weight: bold;
+    font-size: 1.6em;
+}
+
+input[type="id"],
 input[type="password"] {
     width: 100%;
     padding: 10px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
+    margin: 10px -10px;
+    border: 1px solid #ccc; /* Dodanie cienkiej ramki tylko wokół pola wpisywania */
     border-radius: 5px;
+    outline: none;
+    background-color: rgba(255, 255, 255, 0.9);
 }
 
+input[type="id"]:focus,
+input[type="password"]:focus {
+    border-color: #480e50; /* Zmiana koloru ramki przy focusie */
+}
+
+
 button {
-    background-color: #4CAF50;
+    background-color: #480e50;
     color: white;
     padding: 10px;
     border: none;
-    border-radius: 5px;
     cursor: pointer;
+    height: 60px;
+    width: 80px;
+    border-radius: 30%;
+    font-size: 1em;
+    margin-top: 10px;
+}
+
+.button_shift {
+    width: 100px; 
+    height: 100px; 
+    border: none; 
+    border-radius: 50%; /* Okrągłe przyciski */
+    background-color: #26aa43; /* Zielony kolor tła przycisków */
+    color: white; /* Kolor tekstu przycisków */
+    cursor: pointer; 
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); /* Efekt 3D */
+    transition: transform 0.2s; 
+    margin: 20px 0px; 
+}
+
+.button_shift:hover {
+    transform: scale(1.1); /* Powiększenie przycisku na hover */
+}
+
+.button_shift:disabled {
+    background-color: #ccc; /* Szary kolor dla zablokowanych przycisków */
+    cursor: not-allowed; /* Kursor zakazany dla zablokowanych przycisków */
 }
 
 button:hover {
-    background-color: #45a049;
+    background-color: #47254d;
 }

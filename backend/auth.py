@@ -30,16 +30,16 @@ def login():
         if user and user.check_password(password):
             login_user(user)
             flash('Logged in successfully', 'success')
-            return redirect(url_for('dashboard'))
+            return render_template('dashboard.html')
         else:
             flash('Login unsuccessful. Check email and password', 'danger')
     return render_template('login.html')
 
 
 @app.route('/dashboard')
-@login_required
+# @login_required
 def dashboard():
-    return f"Hello, {current_user.username}!"
+    return render_template('dashboard.html')
 
 @app.route('/')
 def index():

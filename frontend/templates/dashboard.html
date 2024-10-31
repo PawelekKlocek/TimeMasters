@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='logo.png') }}">
+    <script>
+        let timerInterval;
+        let startTime;
+
+        function startShift() {
+            startTime = new Date();
+            timerInterval = setInterval(updateTimer, 1000);
+            document.getElementById("startButton").disabled = true;
+            document.getElementById("endButton").disabled = false;
+        }
+
+        function endShift() {
+            clearInterval(timerInterval);
+            document.getElementById("startButton").disabled = false;
+            document.getElementById("endButton").disabled = true;
+
+            // Save timer data to the database (this would be handled by backend logic)
+            alert("Shift ended. Timer data would be saved to the database.");
+        }
+
+        function updateTimer() {
+            const currentTime = new Date();
+            const elapsedTime = new Date(currentTime - startTime);
+            const hours = String(elapsedTime.getUTCHours()).padStart(2, '0');
+            const minutes = String(elapsedTime.getUTCMinutes()).padStart(2, '0');
+            const seconds = String(elapsedTime.getUTCSeconds()).padStart(2, '0');
+            document.getElementById("timer").textContent = `${hours}:${minutes}:${seconds}`;
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const currentDateElement = document.getElementById("currentDate");
+            const today = new Date();
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            currentDateElement.innerText = today.toLocaleDateString('en-GB', options); // Formatowanie na dzień-miesiąc-rok
+});
+
+    </script>
+</head>
+<body onload="setCurrentDate">
+    <div class="container2">
+        <h2>Employee</h2>
+        <div class="timer-container">
+            <div id="timer">00:00:00</div>
+            <div id="currentDate"></div>
+        </div>
+         <div class="button container">
+            <button id="startButton" onclick="startShift()" class="button_shift">Start Shift</button>
+            <button id="endButton" onclick="endShift()" disabled class="button_shift">End Shift</button>
+        </div>
+    </div>
+</body>
+</html>
