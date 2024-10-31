@@ -1,15 +1,15 @@
-from flask import Flask
-from config import Config
-from models import db, User
+from flask import Flask, render_template
+from backend.config import Config
+from backend.models import db, User
 
 def create_app():
-    app = Flask(__name__)
+    app = Flask(__name__, template_folder='../frontend/templates')
     app.config.from_object(Config)
     db.init_app(app)
 
     @app.route('/')
-    def home():
-        return 'Hello World!'
+    def login():
+        return render_template('login.html')
 
     with app.app_context():
         db.create_all()  # Tworzenie tabel w bazie danych

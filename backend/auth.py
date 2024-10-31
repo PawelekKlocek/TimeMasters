@@ -41,6 +41,10 @@ def login():
 def dashboard():
     return f"Hello, {current_user.username}!"
 
+@app.route('/')
+def index():
+    return redirect(url_for('login'))  # Przekierowanie do logowania
+
 
 @app.route('/logout')
 @login_required
@@ -48,11 +52,6 @@ def logout():
     logout_user()
     flash('You have been logged out', 'info')
     return redirect(url_for('login'))
-
-@app.route('/')
-def index():
-    return redirect(url_for('login'))
-
 
 if __name__ == '__main__':
     with app.app_context():
