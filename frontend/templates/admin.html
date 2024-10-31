@@ -41,6 +41,38 @@
             const options = { year: 'numeric', month: 'long', day: 'numeric' };
             currentDateElement.innerText = today.toLocaleDateString('en-GB', options); // Formatowanie na dzień-miesiąc-rok
         });
+
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'block';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        function confirmDelete() {
+            const confirmDelete = confirm("Are you sure you want to delete this user?");
+            if (confirmDelete) {
+                alert("User has been deleted."); // Logika usuwania użytkownika powinna być dodana tutaj
+                closeModal('deleteUserModal');
+            } else {
+                closeModal('deleteUserModal');
+            }
+        }
+
+        function generateReport() {
+            const userId = document.getElementById("reportUserId").value;
+            const startDate = document.getElementById("startDate").value;
+            const endDate = document.getElementById("endDate").value;
+
+            if (userId && startDate && endDate) {
+          // Logika generowania raportu
+            alert(`Report generated for User ID: ${userId} from ${startDate} to ${endDate}`);
+            closeModal('generateReportModal');
+        } else {
+            alert("Please fill in all fields.");
+            }
+        }
     </script>
 </head>
 <body>
@@ -55,14 +87,60 @@
             <div id="currentDate"></div>
         </div>
         <div class="admin-panel">
-            <button class="admin-button">Add New User</button>
-            <button class="admin-button">Delete User</button>
-            <button class="admin-button">Generate Report</button>
+            <button class="admin-button" onclick="openModal('addUserModal')">Add New User</button>
+            <button class="admin-button" onclick="openModal('deleteUserModal')">Delete User</button>
+            <button class="admin-button" onclick="openModal('generateReportModal')">Generate Report</button>
         </div>
         <div class="button-container">
             <button id="startButton" onclick="startShift()" class="button_shift">Start Shift</button>
             <button id="endButton" onclick="endShift()" disabled class="button_shift">End Shift</button>
         </div>
     </div>
+
+    <!-- Modal for Add New User -->
+    <div id="addUserModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('addUserModal')">&times;</span>
+            <h2>Add New User</h2>
+            <label for="userId">ID:</label>
+            <input type="text" id="userId" placeholder="Enter ID"><br>
+            <label for="firstName">First Name:</label>
+            <input type="text" id="firstName" placeholder="Enter First Name"><br>
+            <label for="lastName">Last Name:</label>
+            <input type="text" id="lastName" placeholder="Enter Last Name"><br>
+            <label for="password">Password:</label>
+            <input type="password" id="password" placeholder="Enter Password"><br>
+            <button class="admin-button" onclick="alert('New user added!')">Submit</button>
+        </div>
+    </div>
+
+    <!-- Modal for Delete User -->
+    <div id="deleteUserModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal('deleteUserModal')">&times;</span>
+            <h2>Delete User</h2>
+            <label for="deleteUserId">ID:</label>
+            <input type="text" id="deleteUserId" placeholder="Enter ID"><br>
+            <label for="deletePassword">Password:</label>
+            <input type="password" id="deletePassword" placeholder="Enter Password"><br>
+            <button class="admin-button" onclick="confirmDelete()">OK</button>
+        </div>
+    </div>
+
+    <!-- Modal for Generate Report -->
+<div id="generateReportModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal('generateReportModal')">&times;</span>
+        <h2>Generate Report</h2>
+        <label for="reportUserId">User ID:</label>
+        <input type="text" id="reportUserId" placeholder="Enter User ID"><br>
+        <label for="startDate">Start Date:</label>
+        <input type="date" id="startDate"><br>
+        <label for="endDate">End Date:</label>
+        <input type="date" id="endDate"><br>
+        <button class="admin-button" onclick="generateReport()">Generate Report</button>
+    </div>
+</div>
+
 </body>
 </html>
