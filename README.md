@@ -1,3 +1,55 @@
+## Instrukcja uruchomienia aplikacji
+
+Poniżej znajdują się kroki, które należy wykonać, aby uruchomić aplikację na lokalnym serwerze:
+
+### Wymagania wstępne
+
+Upewnij się, że masz zainstalowane:
+- **Python 3.7+** – [Pobierz Python](https://www.python.org/downloads/)
+- **Git** – [Pobierz Git](https://git-scm.com/downloads)
+- **Wirtualne środowisko Python (virtualenv)** – można je zainstalować za pomocą poniższej komendy:
+  ```bash
+  pip install virtualenv
+  ```
+
+### Krok 1: Klonowanie repozytorium
+
+Sklonuj repozytorium projektu za pomocą Gita:
+```bash
+git clone <URL_REPOZYTORIUM>
+cd <NAZWA_FOLDERU_PROJEKTU>
+```
+
+### Krok 2: Utworzenie i aktywacja wirtualnego środowiska
+
+Utwórz nowe wirtualne środowisko i aktywuj je:
+```bash
+virtualenv venv
+# Na systemach Windows
+venv\Scripts\activate
+# Na systemach Unix/MacOS
+source venv/bin/activate
+```
+
+### Krok 3: Instalacja zależności
+
+Zainstaluj wymagane biblioteki Python:
+```bash
+pip install -r requirements.txt
+```
+
+### Krok 4: Uruchomienie aplikacji
+
+Uruchom aplikację Flask:
+```bash
+flask run
+```
+Aplikacja będzie dostępna pod adresem `http://127.0.0.1:5000`.
+
+### Krok 5: Zatrzymanie aplikacji
+
+Aby zatrzymać aplikację, naciśnij `Ctrl + C` w terminalu.
+
 # Dokumentacja projektu: Aplikacja do śledzenia czasu pracy
 
 ## Członkowie zespołu:
@@ -12,10 +64,10 @@
 
 | Kompetencje             | Ola | Maja | Paweł | Kamil |
 |-------------------------|-----|------|-------|-------|
-| Znajomość algorytmów     | TAK | TAK  | TAK   | TAK   |
-| Znajomość Excela         | TAK | TAK  | NIE   | TAK   |
+| Znajomość algorytmów    | TAK | TAK  | TAK   | TAK   |
+| Znajomość Excela        | TAK | TAK  | NIE   | TAK   |
 | Znajomość j. angielskiego| TAK | TAK  | TAK   | TAK   |
-| Obsługa GitLab           | TAK | TAK  | TAK   | TAK   |
+| Obsługa GitLab          | TAK | TAK  | TAK   | TAK   |
 | Programowanie Python     | TAK | TAK  | TAK   | TAK   |
 | Programowanie SQL        | TAK | TAK  | TAK   | TAK   |
 | Programowanie C++        | TAK | TAK  | NIE   | NIE   |
@@ -28,16 +80,16 @@
 
 ## 2. Pytania i odpowiedzi związane z projektem
 
-| Pytanie                                | Odpowiedź                                               | Uwagi                          |
-|----------------------------------------|---------------------------------------------------------|--------------------------------|
+| Pytanie                                 | Odpowiedź                                               | Uwagi                          |
+|-----------------------------------------|---------------------------------------------------------|--------------------------------|
 | W jakim terminie należy oddać aplikację?| 6 listopada 2024 (środa)                                |                                |
-| Jak mają być generowane raporty?       | W ciągu 1 sekundy                                       |                                |
-| W jakiej formie ma być aplikacja?      | Aplikacja webowa                                        |                                |
-| Jak ma się logować admin?              | Za pomocą ID admina i hasła, ID opisane jako „admin”     | ID w bazie danych               |
-| Jak przeprowadzana jest weryfikacja?   | Za pomocą ID pracownika, numeru stanowiska i hasła       |                                |
-| Zarządzanie bazą pracowników           | Admin zarządza danymi, dodaje/usuwa pracowników i hasła  |                                |
-| Jak generowany jest raport?            | Raport generowany w Excelu, zawiera historię czasu pracy | Zawiera ID pracownika i numer stanowiska |
-| Czy wszystkie wymagania są spełnione?  | TAK                                                     |                                |
+| Jak mają być generowane raporty?        | W ciągu 1 sekundy                                       |                                |
+| W jakiej formie ma być aplikacja?       | Aplikacja webowa                                        |                                |
+| Jak ma się logować admin?               | Za pomocą ID admina i hasła, ID opisane jako „admin”   | ID w bazie danych             |
+| Jak przeprowadzana jest weryfikacja?    | Za pomocą ID pracownika, numeru stanowiska i hasła       |                                |
+| Zarządzanie bazą pracowników            | Admin zarządza danymi, dodaje/usuwa pracowników i hasła  |                                |
+| Jak generowany jest raport?             | Raport generowany w Excelu, zawiera historię czasu pracy | Zawiera ID pracownika i numer stanowiska |
+| Czy wszystkie wymagania są spełnione?   | TAK                                                     |                                |
 
 ---
 
@@ -83,7 +135,6 @@ graph LR
 ```
 ### Diagram sekwencyjny UML
 ```mermaid
-
 sequenceDiagram
     participant Pracownik
     participant System
@@ -103,7 +154,10 @@ System składa się z trzech głównych komponentów:
 - **Baza danych** – gromadzi i segreguje informacje o czasie pracy.
 - **Generowanie raportów** – admin może wygenerować raport na podstawie danych z bazy.
 
+## 7. Język implementacji: Python
 
-## 7. Język implementacji: python 
+Uzasadnienie: wszyscy członkowie zespołu podali w kompetencjach umiejętność programowania w Pythonie, zatem jest to opcja najwygodniejsza do wprowadzenia – cały zespół będzie mógł współpracować na równym poziomie. Dodatkowo za Pythonem przemawia doświadczenie w tworzeniu stron internetowych po semestralnym kursie, w którym uczestniczył każdy z członków zespołu.
 
-Uzasadnienie: wszyscy członkowie zespołu podali w kompetencjach umiejętność programowania w pythonie, zatem jest to opcja najwygodniejsza do wprowadzenia – cały zespół będzie mógł współpracować na równym poziomie. Dodatkowo za pythonem przemawia doświadczenie w tworzeniu stron internetowych po semestralnym kursie, w którym uczestniczył każdy z członków zespołu. 
+---
+
+
