@@ -1,26 +1,20 @@
-import os
+from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify
+from .models import db, User, Timer
+from flask_login import login_user, logout_user, login_required, current_user
+from datetime import datetime
 
-from flask import Flask, render_template, redirect, url_for, flash, request
+auth_bp = Blueprint('auth', __name__)
 
-from config import Config
-from models import db, User
-from flask_login import LoginManager, login_user, logout_user, login_required, current_user
+def generate_unique_username(first_name, last_name):
+    base_username = f"{first_name}.{last_name}".lower()
+    username = base_username
+    counter = 1
+    while User.query.filter_by(username=username).first():
+        username = f"{base_username}{counter}"
+        counter += 1
+    return username
 
-app = Flask(__name__, template_folder=os.path.join("..", "frontend", "templates"))
-
-app.config.from_object(Config)
-
-db.init_app(app)
-
-login_manager = LoginManager(app)
-login_manager.login_view = 'login'
-
-
-@login_manager.user_loader
-def load_user(user_id):
-    return db.session.get(User, int(user_id))
-
-@app.route('/login', methods=['GET', 'POST'])
+@auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         email = request.form.get('email')
@@ -30,35 +24,82 @@ def login():
         if user and user.check_password(password):
             login_user(user)
             flash('Logged in successfully', 'success')
-            return render_template('dashboard.html')
+            if user.is_admin:
+                return redirect(url_for('auth.admin'))
+            return redirect(url_for('auth.dashboard'))
         else:
             flash('Login unsuccessful. Check email and password', 'danger')
     return render_template('login.html')
 
-
-@app.route('/dashboard')
-# @login_required
+@auth_bp.route('/dashboard')
+@login_required
 def dashboard():
     return render_template('dashboard.html')
 
-@app.route('/admin')
-# @login_required
+@auth_bp.route('/admin')
+@login_required
 def admin():
+    if not current_user.is_admin:
+        flash('Access denied', 'danger')
+        return redirect(url_for('auth.dashboard'))
     return render_template('admin.html')
 
-@app.route('/')
+@auth_bp.route('/save_timer', methods=['POST'])
+@login_required
+def save_timer():
+    data = request.get_json()
+    hours = data.get('hours')
+    minutes = data.get('minutes')
+    seconds = data.get('seconds')
+    total_seconds = hours * 3600 + minutes * 60 + seconds
+
+    new_timer = Timer(
+        user_id=current_user.id,
+        time=total_seconds,
+        date=datetime.utcnow()
+    )
+    db.session.add(new_timer)
+    db.session.commit()
+
+    return jsonify({"status": "success", "message": "Timer data saved"})
+
+@auth_bp.route('/add_user', methods=['POST'])
+@login_required
+def add_user():
+    if not current_user.is_admin:
+        return jsonify({"status": "error", "message": "Access denied"}), 403
+
+    data = request.get_json()
+    first_name = data.get('first_name')
+    last_name = data.get('last_name')
+    email = data.get('email')
+    password = data.get('password')
+
+    username = generate_unique_username(first_name, last_name)
+    hashed_password = User.hash_password(password)
+
+    new_user = User(
+        username=username,
+        first_name=first_name,
+        last_name=last_name,
+        email=email,
+        password=hashed_password,
+        is_admin=False
+    )
+    db.session.add(new_user)
+    db.session.commit()
+
+    return jsonify({"status": "success", "message": "User added successfully", "username": username})
+
+@auth_bp.route('/')
 def index():
-    return render_template('login.html') # Przekierowanie do logowania
+    if current_user.is_authenticated:
+        return redirect(url_for('auth.dashboard'))
+    return redirect(url_for('auth.login'))
 
-
-@app.route('/logout')
-#@login_required
+@auth_bp.route('/logout')
+@login_required
 def logout():
     logout_user()
     flash('You have been logged out', 'info')
-    return render_template('login.html')
-
-if __name__ == '__main__':
-    with app.app_context():
-        db.create_all()
-    app.run(debug=True, port=8082)
+    return redirect(url_for('auth.login'))

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Employee Dashboard</title>
+    <title>Admin Dashboard</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='logo.png') }}">
     <script>
@@ -13,17 +13,39 @@
         function startShift() {
             startTime = new Date();
             timerInterval = setInterval(updateTimer, 1000);
-            document.getElementById("startButton").disabled = true;
-            document.getElementById("endButton").disabled = false;
         }
 
         function endShift() {
             clearInterval(timerInterval);
-            document.getElementById("startButton").disabled = false;
-            document.getElementById("endButton").disabled = true;
+            const elapsedTime = new Date(new Date() - startTime);
+            const hours = elapsedTime.getUTCHours();
+            const minutes = elapsedTime.getUTCMinutes();
+            const seconds = elapsedTime.getUTCSeconds();
 
-            // Save timer data to the database (this would be handled by backend logic)
-            alert("Shift ended. Timer data would be saved to the database.");
+            // Wysyłanie danych timera do backendu za pomocą AJAX
+            fetch("{{ url_for('auth.save_timer') }}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    hours: hours,
+                    minutes: minutes,
+                    seconds: seconds,
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === "success") {
+                    alert("Shift ended. Timer data saved to the database.");
+                } else {
+                    alert("Error saving timer data.");
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("Error saving timer data.");
+            });
         }
 
         function updateTimer() {
@@ -66,19 +88,51 @@
             const endDate = document.getElementById("endDate").value;
 
             if (userId && startDate && endDate) {
-          // Logika generowania raportu
-            alert(`Report generated for User ID: ${userId} from ${startDate} to ${endDate}`);
-            closeModal('generateReportModal');
-        } else {
-            alert("Please fill in all fields.");
+                // Logika generowania raportu powinna być dodana tutaj
+                alert(`Generating report for user ${userId} from ${startDate} to ${endDate}`);
+            } else {
+                alert("Please fill in all fields to generate a report.");
             }
+        }
+
+        function addUser() {
+            const firstName = document.getElementById("firstName").value;
+            const lastName = document.getElementById("lastName").value;
+            const email = document.getElementById("email").value;
+            const password = document.getElementById("password").value;
+
+            fetch("{{ url_for('auth.add_user') }}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    first_name: firstName,
+                    last_name: lastName,
+                    email: email,
+                    password: password
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === "success") {
+                    alert(`User added successfully. Username: ${data.username}`);
+                    closeModal('addUserModal');
+                } else {
+                    alert(`Error: ${data.message}`);
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("Error adding user.");
+            });
         }
     </script>
 </head>
 <body>
     <div class="top-bar">
         <span class="user-greeting">Hey, {{ user_name }}</span>
-        <a href="/" class="logout-button">Log Out</a>
+        <a href="{{ url_for('auth.logout') }}" class="logout-button">Log Out</a>
     </div>
     <div class="container2">
         <h2>Admin Panel</h2>
@@ -102,15 +156,15 @@
         <div class="modal-content">
             <span class="close" onclick="closeModal('addUserModal')">&times;</span>
             <h2>Add New User</h2>
-            <label for="userId">ID:</label>
-            <input type="text" id="userId" placeholder="Enter ID"><br>
             <label for="firstName">First Name:</label>
             <input type="text" id="firstName" placeholder="Enter First Name"><br>
             <label for="lastName">Last Name:</label>
             <input type="text" id="lastName" placeholder="Enter Last Name"><br>
+            <label for="email">Email:</label>
+            <input type="email" id="email" placeholder="Enter Email"><br>
             <label for="password">Password:</label>
             <input type="password" id="password" placeholder="Enter Password"><br>
-            <button class="admin-button" onclick="alert('New user added!')">Submit</button>
+            <button class="admin-button" onclick="addUser()">Submit</button>
         </div>
     </div>
 

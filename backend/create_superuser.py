@@ -1,35 +1,36 @@
-from models import db, User
 from flask import Flask
-from config import Config
-from werkzeug.security import generate_password_hash
+from .models import db, User
 
-app = Flask(__name__)
-app.config.from_object(Config)
+app = Flask(__name__, instance_relative_config=True)
+app.config.from_object('instance.config.Config')
+app.config.from_pyfile('config.py', silent=True)
 db.init_app(app)
 
-# Konfiguracja superużytkownika
-def create_superuser(email, username, password):
+def create_superuser(email, username, password, first_name, last_name): 
     with app.app_context():
-        # Sprawdź, czy użytkownik już istnieje
+        db.create_all() 
+
         if User.query.filter_by(email=email).first():
             print("Superuser already exists.")
             return
 
-        # Utwórz nowego superużytkownika
         superuser = User(
             email=email,
             username=username,
-            password=generate_password_hash(password),
+            first_name=first_name,
+            last_name=last_name,
+            password=User.hash_password(password),  # Użyj metody hash_password
             is_admin=True
         )
         db.session.add(superuser)
         db.session.commit()
         print(f"Superuser {username} created successfully.")
 
-# Parametry superużytkownika (przykładowe)
 if __name__ == "__main__":
-    # Możesz też pobierać dane z input() dla większej interaktywności
     email = "admin@example.com"
-    username = "admin"
     password = "supersecretpassword"
-    create_superuser(email, username, password)
+    first_name = "Admin"
+    last_name = "Admin"
+    username = first_name+ last_name
+
+    create_superuser(email, username, password, first_name, last_name)

@@ -21,9 +21,35 @@
             clearInterval(timerInterval);
             document.getElementById("startButton").disabled = false;
             document.getElementById("endButton").disabled = true;
+            const elapsedTime = new Date(new Date() - startTime);
+            const hours = elapsedTime.getUTCHours();
+            const minutes = elapsedTime.getUTCMinutes();
+            const seconds = elapsedTime.getUTCSeconds();
 
-            // Save timer data to the database (this would be handled by backend logic)
-            alert("Shift ended. Timer data would be saved to the database.");
+            // Wysyłanie danych timera do backendu za pomocą AJAX
+            fetch("{{ url_for('auth.save_timer') }}", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    hours: hours,
+                    minutes: minutes,
+                    seconds: seconds
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === "success") {
+                    alert("Shift ended. Timer data saved to the database.");
+                } else {
+                    alert("Error saving timer data.");
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("Error saving timer data.");
+            });
         }
 
         function updateTimer() {
@@ -40,14 +66,13 @@
             const today = new Date();
             const options = { year: 'numeric', month: 'long', day: 'numeric' };
             currentDateElement.innerText = today.toLocaleDateString('en-GB', options); // Formatowanie na dzień-miesiąc-rok
-});
-
+        });
     </script>
 </head>
-<body onload="setCurrentDate">
+<body>
     <div class="top-bar">
-        <span class="user-greeting">Hey, {{ user_name }}</span>
-        <a href="/" class="logout-button">Log Out</a>
+        <span class="user-greeting">Hey, {{ current_user.username }}</span>
+        <a href="{{ url_for('auth.logout') }}" class="logout-button">Log Out</a>
     </div>
     <div class="container2">
         <h2>Employee</h2>
@@ -55,7 +80,7 @@
             <div id="timer">00:00:00</div>
             <div id="currentDate"></div>
         </div>
-         <div class="button container">
+        <div class="button-container">
             <button id="startButton" onclick="startShift()" class="button_shift">Start Shift</button>
             <button id="endButton" onclick="endShift()" disabled class="button_shift">End Shift</button>
         </div>
