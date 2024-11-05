@@ -5,3 +5,4 @@ Flask-Bcrypt==1.0.1
 Werkzeug==2.3.7
 SQLAlchemy==1.4.47
 pandas==2.1.1
+numpy==1.26.0
