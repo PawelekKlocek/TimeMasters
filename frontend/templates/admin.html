@@ -67,6 +67,7 @@
         });
 
         function openModal(modalId) {
+    console.log(`Opening modal: ${modalId}`);
     document.getElementById(modalId).style.display = 'block';
 
     // Jeśli otwieramy modal dla generowania raportu, pobieramy listę użytkowników
@@ -74,6 +75,7 @@
         fetch("/get_users")
             .then(response => response.json())
             .then(users => {
+                console.log('Users fetched for report:', users);
                 const userList = document.getElementById("userList");
                 userList.innerHTML = ''; // reset listy
 
@@ -87,22 +89,24 @@
             .catch(error => console.error("Error fetching users:", error));
     }
 
+    // Jeśli otwieramy modal dla usuwania użytkownika, pobieramy listę użytkowników
     if (modalId === 'deleteUserModal') {
-    fetch("/get_users")
-        .then(response => response.json())
-        .then(users => {
-            const deleteUserList = document.getElementById("deleteUserList");
-            deleteUserList.innerHTML = '';
+        fetch("/get_users")
+            .then(response => response.json())
+            .then(users => {
+                console.log('Users fetched for delete:', users);
+                const deleteUserList = document.getElementById("deleteUserList");
+                deleteUserList.innerHTML = ''; // reset listy
 
-            users.forEach(user => {
-                const option = document.createElement("option");
-                option.value = user.id; // ID użytkownika
-                option.textContent = user.username; // Nazwa użytkownika                
-                deleteUserList.appendChild(option);
-            });
-        })
-        .catch(error => console.error("Error fetching users:", error));
-}
+                users.forEach(user => {
+                    const option = document.createElement("option");
+                    option.value = user.id; // ID użytkownika
+                    option.textContent = user.username; // Nazwa użytkownika
+                    deleteUserList.appendChild(option);
+                });
+            })
+            .catch(error => console.error("Error fetching users:", error));
+    }
 }
 
 
@@ -122,54 +126,44 @@
             const startDate = document.getElementById("startDate").value;
             const endDate = document.getElementById("endDate").value;
 
-            if (userId && startDate && endDate) {
-                fetch("/generate_report", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        user_id: userId,
-                        start_date: startDate,
-                        end_date: endDate
-                    })
+            fetch("/generate_report", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    user_id: userId,
+                    start_date: startDate,
+                    end_date: endDate
                 })
-                .then(response => {
-                    if (response.ok) {
-                        return response.blob();
-                    } else {
-                        return response.json().then(data => { throw new Error(data.message); });
-                    }
-                })
-                .then(blob => {
-                    const url = window.URL.createObjectURL(blob);
-                    const a = document.createElement("a");
-                    a.href = url;
-                    a.download = `report_${userId}_${startDate}_to_${endDate}.xlsx`;
-                    document.body.appendChild(a);
-                    a.click();
-                    a.remove();
-                })
-                .catch(error => {
-                    console.error("Error:", error);
-                    alert("Error generating report: " + error.message);
-                });
-            } else {
-                alert("Please fill in all fields to generate a report.");
-            }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === "success") {
+                    alert('Report generated successfully');
+                    // Wyczyść pola input
+                    document.getElementById("reportUserId").value = '';
+                    document.getElementById("startDate").value = '';
+                    document.getElementById("endDate").value = '';
+                    closeModal('generateReportModal');
+                } else {
+                    alert('Error generating report: ' + data.message);
+                }
+            })
+            .catch(error => console.error('Error:', error));
         }
 
 
         function addUser() {
-            const firstName = document.getElementById("firstName").value;
-            const lastName = document.getElementById("lastName").value;
-            const email = document.getElementById("email").value;
-            const password = document.getElementById("password").value;
+            const firstName = document.getElementById('firstName').value;
+            const lastName = document.getElementById('lastName').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
 
-            fetch("{{ url_for('auth.add_user') }}", {
-                method: "POST",
+            fetch('/add_user', {
+                method: 'POST',
                 headers: {
-                    "Content-Type": "application/json"
+                    'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
                     first_name: firstName,
@@ -180,46 +174,46 @@
             })
             .then(response => response.json())
             .then(data => {
-                if (data.status === "success") {
-                    alert(`User added successfully. Username: ${data.username}`);
+                if (data.status === 'success') {
+                    alert('User added successfully');
+                    // Wyczyść pola input
+                    document.getElementById('firstName').value = '';
+                    document.getElementById('lastName').value = '';
+                    document.getElementById('email').value = '';
+                    document.getElementById('password').value = '';
                     closeModal('addUserModal');
                 } else {
-                    alert(`Error: ${data.message}`);
+                    alert('Error adding user: ' + data.message);
                 }
             })
-            .catch(error => {
-                console.error("Error:", error);
-                alert("Error adding user.");
-            });
+            .catch(error => console.error('Error:', error));
         }
 
         function deleteUser() {
-            const userEmail = document.getElementById("deleteUserEmail").value;
-            const password = document.getElementById("deletePassword").value;
+            const ID = document.getElementById("deleteUserID").value;
+            //const password = document.getElementById("deletePassword").value;
 
-            fetch("{{ url_for('auth.delete_user') }}", {
+            fetch("/delete_user", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
                 },
                 body: JSON.stringify({
-                    user_email: userEmail,
-                    password: password
+                    ID: ID
                 })
             })
             .then(response => response.json())
             .then(data => {
                 if (data.status === "success") {
-                    alert(`User deleted successfully. Username: ${data.username}`);
+                    alert('User deleted successfully');
+                    // Wyczyść pola input
+                    document.getElementById("deleteUserID").value = '';
                     closeModal('deleteUserModal');
                 } else {
-                    alert(`Error: ${data.message}`);
+                    alert('Error deleting user: ' + data.message);
                 }
             })
-            .catch(error => {
-                console.error("Error:", error);
-                alert("Error deleting user.");
-            });
+            .catch(error => console.error('Error:', error));
         }
 
 
@@ -269,13 +263,11 @@
         <div class="modal-content">
             <span class="close" onclick="closeModal('deleteUserModal')">&times;</span>
             <h2>Delete User</h2>
-            <label for="deleteUserEmail">ID:</label>
-            <input list="deleteUserList" id="deleteUserEmail" placeholder="Enter or select ID"><br>
+            <label for="deleteUserID">ID:</label>
+            <input list="deleteUserList" id="deleteUserID" placeholder="Enter or select ID"><br>
             <datalist id="deleteUserList">
                 <!-- Opcje użytkowników zostaną tutaj dodane przez JavaScript -->
             </datalist>
-            <label for="password">Password:</label>
-            <input type="password" id="deletePassword" placeholder="Enter Password"><br>
             <button class="admin-button" onclick="deleteUser()">Submit</button>
         </div>
     </div>

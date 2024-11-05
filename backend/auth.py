@@ -101,19 +101,22 @@ def delete_user():
         return jsonify({"status": "error", "message": "Access denied"}), 403
 
     data = request.get_json()
-    email = data.get('user_email')
-    password = data.get('password')
+    user_id = data.get('ID')
 
-    user = User.query.filter_by(email=email).first()
+    user = User.query.filter_by(id=user_id).first()
 
-    if user and user.check_password(password):
+    if user:
+        # Usuwanie powiązanych rekordów z tabeli Timer
+        Timer.query.filter_by(user_id=user.id).delete()
+
+        # Usunięcie użytkownika za pomocą metody statycznej
         result = User.delete_user(user.id)
         if result:
             return jsonify({"status": "success"})
         else:
             return jsonify({"status": "error", "message": "Could not delete user."})
     else:
-        return jsonify({"status": "error", "message": "Authentication failed."})
+        return jsonify({"status": "error", "message": "User not found."})
 
 
 @auth_bp.route('/get_users', methods=['GET'])
