@@ -1,4 +1,6 @@
-from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify
+from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify, send_file
+import pandas as pd
+from io import BytesIO
 from .models import db, User, Timer
 from flask_login import login_user, logout_user, login_required, current_user
 from datetime import datetime
@@ -90,6 +92,88 @@ def add_user():
     db.session.commit()
 
     return jsonify({"status": "success", "message": "User added successfully", "username": username})
+
+
+@auth_bp.route('/delete_user', methods=['POST'])
+@login_required
+def delete_user():
+    if not current_user.is_admin:
+        return jsonify({"status": "error", "message": "Access denied"}), 403
+
+    data = request.get_json()
+    email = data.get('user_email')
+    password = data.get('password')
+
+    user = User.query.filter_by(email=email).first()
+
+    if user and user.check_password(password):
+        result = User.delete_user(user.id)
+        if result:
+            return jsonify({"status": "success"})
+        else:
+            return jsonify({"status": "error", "message": "Could not delete user."})
+    else:
+        return jsonify({"status": "error", "message": "Authentication failed."})
+
+
+def generate_excel_report(user_id, start_date, end_date):
+    try:
+        start_date = datetime.strptime(start_date, "%Y-%m-%d")
+        end_date = datetime.strptime(end_date, "%Y-%m-%d")
+
+        user = User.query.get(user_id)
+        if not user:
+            return None, "User not found."
+
+        timers = Timer.query.filter(
+            Timer.user_id == user_id,
+            Timer.date >= start_date,
+            Timer.date <= end_date
+        ).all()
+
+        data = {
+            "Date": [timer.date.strftime("%Y-%m-%d") for timer in timers],
+            "Time (seconds)": [timer.time for timer in timers]
+        }
+        df = pd.DataFrame(data)
+
+        total_time = df["Time (seconds)"].sum()
+
+
+        output = BytesIO()
+        with pd.ExcelWriter(output, engine="xlsxwriter") as writer:
+            df.to_excel(writer, index=False, sheet_name="Report")
+
+            workbook = writer.book
+            worksheet = writer.sheets["Report"]
+            worksheet.write(len(df) + 1, 0, "Total Time (seconds)")
+            worksheet.write(len(df) + 1, 1, total_time)
+
+        output.seek(0)
+
+        return output, None
+    except Exception as e:
+        return None, f"Error generating report: {user_id}"
+
+@auth_bp.route('/generate_report', methods=['POST'])
+@login_required
+def generate_report():
+    data = request.get_json()
+    user_id = data.get('user_id')
+    start_date = data.get('start_date')
+    end_date = data.get('end_date')
+
+    report_file, message = generate_excel_report(user_id, start_date, end_date)
+
+    if report_file:
+        return send_file(
+            report_file,
+            as_attachment=True,
+            download_name=f"report_{user_id}_{start_date}_to_{end_date}.xlsx",
+            mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
+    else:
+        return jsonify({"status": "error", "message": message}), 400
 
 @auth_bp.route('/')
 def index():
