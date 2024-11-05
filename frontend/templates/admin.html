@@ -13,6 +13,8 @@
         function startShift() {
             startTime = new Date();
             timerInterval = setInterval(updateTimer, 1000);
+            document.getElementById("startButton").disabled = true;
+            document.getElementById("endButton").disabled = false;
         }
 
         function endShift() {
