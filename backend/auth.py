@@ -116,6 +116,13 @@ def delete_user():
         return jsonify({"status": "error", "message": "Authentication failed."})
 
 
+@auth_bp.route('/get_users', methods=['GET'])
+def get_users():
+    users = User.query.all()
+    user_list = [{"id": user.id, "username": user.username} for user in users]
+    return jsonify(user_list)
+    
+
 def generate_excel_report(user_id, start_date, end_date):
     try:
         start_date = datetime.strptime(start_date, "%Y-%m-%d")
