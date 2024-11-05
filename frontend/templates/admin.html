@@ -65,7 +65,49 @@
         });
 
         function openModal(modalId) {
-            document.getElementById(modalId).style.display = 'block';
+    document.getElementById(modalId).style.display = 'block';
+
+    // Jeśli otwieramy modal dla generowania raportu, pobieramy listę użytkowników
+    if (modalId === 'generateReportModal') {
+        fetch("/get_users")
+            .then(response => response.json())
+            .then(users => {
+                const userList = document.getElementById("userList");
+                userList.innerHTML = ''; // reset listy
+
+                users.forEach(user => {
+                    const option = document.createElement("option");
+                    option.value = user.id; // ID użytkownika
+                    option.textContent = user.username; // Nazwa użytkownika
+                    userList.appendChild(option);
+                });
+            })
+            .catch(error => console.error("Error fetching users:", error));
+    }
+
+    if (modalId === 'deleteUserModal') {
+    fetch("/get_users")
+        .then(response => response.json())
+        .then(users => {
+            const deleteUserList = document.getElementById("deleteUserList");
+            deleteUserList.innerHTML = '';
+
+            users.forEach(user => {
+                const option = document.createElement("option");
+                option.value = user.id; // ID użytkownika
+                option.textContent = user.username; // Nazwa użytkownika                
+                deleteUserList.appendChild(option);
+            });
+        })
+        .catch(error => console.error("Error fetching users:", error));
+}
+}
+
+
+        function selectUserId() {
+            const userList = document.getElementById("userList");
+            const reportUserId = document.getElementById("reportUserId");
+            reportUserId.value = userList.value; // Ustaw ID użytkownika z listy rozwijanej
         }
 
         function closeModal(modalId) {
@@ -225,8 +267,11 @@
         <div class="modal-content">
             <span class="close" onclick="closeModal('deleteUserModal')">&times;</span>
             <h2>Delete User</h2>
-            <label for="email">Email:</label>
-            <input type="text" id="deleteUserEmail" placeholder="Enter email"><br>
+            <label for="deleteUserEmail">ID:</label>
+            <input list="deleteUserList" id="deleteUserEmail" placeholder="Enter or select ID"><br>
+            <datalist id="deleteUserList">
+                <!-- Opcje użytkowników zostaną tutaj dodane przez JavaScript -->
+            </datalist>
             <label for="password">Password:</label>
             <input type="password" id="deletePassword" placeholder="Enter Password"><br>
             <button class="admin-button" onclick="deleteUser()">Submit</button>
@@ -239,7 +284,11 @@
         <span class="close" onclick="closeModal('generateReportModal')">&times;</span>
         <h2>Generate Report</h2>
         <label for="reportUserId">User ID:</label>
-        <input type="text" id="reportUserId" placeholder="Enter User ID"><br>
+        <input list="userList" id="reportUserId" placeholder="Enter or select User ID">
+        <datalist id="userList">
+            <!-- Opcje użytkowników zostaną tutaj dodane przez JavaScript -->
+        </datalist>
+        <br>
         <label for="startDate">Start Date:</label>
         <input type="date" id="startDate"><br>
         <label for="endDate">End Date:</label>
