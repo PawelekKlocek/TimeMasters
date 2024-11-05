@@ -141,6 +141,9 @@ def generate_excel_report(user_id, start_date, end_date):
             Timer.date <= end_date
         ).all()
 
+        if not timers:
+            return None, "No timer data found for the specified period."
+
         data = {
             "Date": [timer.date.strftime("%Y-%m-%d") for timer in timers],
             "Time (seconds)": [timer.time for timer in timers]
@@ -148,7 +151,6 @@ def generate_excel_report(user_id, start_date, end_date):
         df = pd.DataFrame(data)
 
         total_time = df["Time (seconds)"].sum()
-
 
         output = BytesIO()
         with pd.ExcelWriter(output, engine="xlsxwriter") as writer:
@@ -163,7 +165,7 @@ def generate_excel_report(user_id, start_date, end_date):
 
         return output, None
     except Exception as e:
-        return None, f"Error generating report: {user_id}"
+        return None, f"Error generating report: {str(e)}"
 
 @auth_bp.route('/generate_report', methods=['POST'])
 @login_required
@@ -173,21 +175,21 @@ def generate_report():
     start_date = data.get('start_date')
     end_date = data.get('end_date')
 
-    report_file, message = generate_excel_report(user_id, start_date, end_date)
+    print(f"Generating report for user_id: {user_id}, start_date: {start_date}, end_date: {end_date}")
 
-    if report_file:
-        return send_file(
-            report_file,
-            as_attachment=True,
-            download_name=f"report_{user_id}_{start_date}_to_{end_date}.xlsx",
-            mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-        )
-    else:
-        return jsonify({"status": "error", "message": message}), 400
+    output, error = generate_excel_report(user_id, start_date, end_date)
+    if error:
+        print(f"Error: {error}")
+        return jsonify({"status": "error", "message": error}), 400
+
+    print("Report generated successfully, sending file to client.")
+    return send_file(output, download_name="report.xlsx", as_attachment=True)
 
 @auth_bp.route('/')
 def index():
     if current_user.is_authenticated:
+        if current_user.is_admin:
+            return redirect(url_for('auth.admin'))
         return redirect(url_for('auth.dashboard'))
     return redirect(url_for('auth.login'))
 

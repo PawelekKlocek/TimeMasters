@@ -137,20 +137,33 @@
                     end_date: endDate
                 })
             })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === "success") {
-                    alert('Report generated successfully');
-                    // Wyczyść pola input
-                    document.getElementById("reportUserId").value = '';
-                    document.getElementById("startDate").value = '';
-                    document.getElementById("endDate").value = '';
-                    closeModal('generateReportModal');
+            .then(response => {
+                if (response.ok) {
+                    return response.blob();
                 } else {
-                    alert('Error generating report: ' + data.message);
+                    return response.json().then(data => {
+                        throw new Error(data.message);
+                    });
                 }
             })
-            .catch(error => console.error('Error:', error));
+            .then(blob => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = "report.xlsx";
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                // Wyczyść pola input
+                document.getElementById("reportUserId").value = '';
+                document.getElementById("startDate").value = '';
+                document.getElementById("endDate").value = '';
+                closeModal('generateReportModal');
+            })
+            .catch(error => {
+                console.error("Error generating report:", error);
+                alert("Error generating report: " + error.message);
+            });
         }
 
 
@@ -251,7 +264,7 @@
             <label for="lastName">Last Name:</label>
             <input type="text" id="lastName" placeholder="Enter Last Name"><br>
             <label for="email">Email:</label>
-            <input type="email" id="email" placeholder="Enter Email"><br>
+            <input type="text" id="email" placeholder="Enter Email"><br>
             <label for="password">Password:</label>
             <input type="password" id="password" placeholder="Enter Password"><br>
             <button class="admin-button" onclick="addUser()">Submit</button>
@@ -263,8 +276,8 @@
         <div class="modal-content">
             <span class="close" onclick="closeModal('deleteUserModal')">&times;</span>
             <h2>Delete User</h2>
-            <label for="deleteUserID">ID:</label>
-            <input list="deleteUserList" id="deleteUserID" placeholder="Enter or select ID"><br>
+            <label for="deleteUserID">User ID:</label>
+            <input type="text" list="deleteUserList" id="deleteUserID" placeholder="Enter or select ID"><br>
             <datalist id="deleteUserList">
                 <!-- Opcje użytkowników zostaną tutaj dodane przez JavaScript -->
             </datalist>
