@@ -24,17 +24,18 @@ cd <NAZWA_FOLDERU_PROJEKTU>
 
 Utwórz nowe wirtualne środowisko i aktywuj je:
 ```bash
-virtualenv venv
+python -m venv venv
 # Na systemach Windows
 venv\Scripts\activate
 # Na systemach Unix/MacOS
 source venv/bin/activate
 ```
 
-### Krok 3: Instalacja zależności
+### Krok 3: Instalacja zależności i dodanie zmiennej 
 
 Zainstaluj wymagane biblioteki Python:
 ```bash
+$env:FLASK_APP = "main.py"
 pip install -r requirements.txt
 ```
 
