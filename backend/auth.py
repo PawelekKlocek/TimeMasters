@@ -143,6 +143,8 @@ def generate_excel_report(user_id, start_date, end_date):
 
         if not timers:
             return None, "No timer data found for the specified period."
+        
+        
 
         data = {
             "Date": [timer.date.strftime("%Y-%m-%d") for timer in timers],
@@ -183,7 +185,7 @@ def generate_report():
         return jsonify({"status": "error", "message": error}), 400
 
     print("Report generated successfully, sending file to client.")
-    return send_file(output, download_name="report.xlsx", as_attachment=True)
+    return send_file(output, download_name=f"report{user_id}.xlsx", as_attachment=True)
 
 @auth_bp.route('/')
 def index():
