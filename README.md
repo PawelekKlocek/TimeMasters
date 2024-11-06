@@ -24,7 +24,7 @@ cd <NAZWA_FOLDERU_PROJEKTU>
 
 Utwórz nowe wirtualne środowisko i aktywuj je:
 ```bash
-virtualenv venv
+python -m venv venv
 # Na systemach Windows
 venv\Scripts\activate
 # Na systemach Unix/MacOS
