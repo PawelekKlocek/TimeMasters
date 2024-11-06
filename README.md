@@ -31,10 +31,11 @@ venv\Scripts\activate
 source venv/bin/activate
 ```
 
-### Krok 3: Instalacja zależności
+### Krok 3: Instalacja zależności i dodanie zmiennej 
 
 Zainstaluj wymagane biblioteki Python:
 ```bash
+$env:FLASK_APP = "main.py"
 pip install -r requirements.txt
 ```
 
